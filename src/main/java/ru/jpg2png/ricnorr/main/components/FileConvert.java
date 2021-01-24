@@ -10,6 +10,7 @@ import ru.jpg2png.ricnorr.main.services.GeneratedPdfService;
 import ru.jpg2png.ricnorr.main.services.JpgToPdfConvertService;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -20,6 +21,7 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 @RestController
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class FileConvert {
 
     private final JpgToPdfConvertService jpgToPdfConvertService = new JpgToPdfConvertService();
@@ -29,8 +31,8 @@ public class FileConvert {
         this.generatedPdfService = generatedPdfService;
     }
 
-    @PostMapping("/convertFile")
-    public void jpgUpload(@RequestParam("file") MultipartFile[] multipartFiles, HttpSession session) {
+    @PostMapping(value = "/convertFile", produces = MediaType.APPLICATION_PDF_VALUE)
+    public @ResponseBody byte[] jpgUpload(@RequestParam("file") MultipartFile[] multipartFiles, HttpSession session, HttpServletResponse response) {
         byte[] pdfBytes = jpgToPdfConvertService.jpgToPdfConvert(Arrays.stream(multipartFiles).map((file) -> {
             try {
                 return (file.getBytes());
@@ -39,20 +41,8 @@ public class FileConvert {
             }
         }).collect(Collectors.toList()));
         session.setAttribute("file", pdfBytes);
+        response.setHeader("sessionId", session.getId());
         generatedPdfService.save(pdfBytes);
+        return pdfBytes;
     }
-
-    @GetMapping(
-            value = "/convertFile/download",
-            produces = MediaType.APPLICATION_PDF_VALUE
-    )
-    public @ResponseBody byte[] pdfDownload(HttpSession session) {
-        byte[] pdfFile = (byte[] )session.getAttribute("file");
-        if (pdfFile == null) {
-            throw new RuntimeException();
-        } else {
-            return pdfFile;
-        }
-    }
-
 }
