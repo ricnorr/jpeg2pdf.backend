@@ -21,7 +21,7 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 @RestController
-@CrossOrigin(origins = "*", maxAge = 3600)
+@CrossOrigin(origins = "https://jpeg2pdf.herokuapp.com", maxAge = 3600)
 public class FileConvert {
 
     private final JpgToPdfConvertService jpgToPdfConvertService = new JpgToPdfConvertService();
