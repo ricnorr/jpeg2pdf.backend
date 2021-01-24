@@ -21,7 +21,7 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 @RestController
-@CrossOrigin(origins = "https://jpeg2pdf.netlify.com", maxAge = 3600)
+@CrossOrigin(origins = "https://jpeg2pdf.netlify.app", maxAge = 3600)
 public class FileConvert {
 
     private final JpgToPdfConvertService jpgToPdfConvertService = new JpgToPdfConvertService();
